@@ -6,16 +6,14 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using WebStore.Clients.Employees;
-using WebStore.Clients.Orders;
-using WebStore.Clients.Products;
-using WebStore.Clients.Values;
 using WebStore.DAL.Context;
 using WebStore.Domain.Entities.Identity;
 using WebStore.Interfaces.Api;
 using WebStore.Interfaces.Services;
 using WebStore.Services.Data;
 using WebStore.Services.Products.InCookies;
+using WebStore.Services.Products.InMemory;
+using WebStore.Services.Products.InSQL;
 
 namespace WebStore.ServiceHosting
 {
@@ -28,7 +26,7 @@ namespace WebStore.ServiceHosting
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddDbContext<WebStoreDB>(opt =>
-                  opt.UseSqlServer(Configuration.GetConnectionString("DefaultConnection")));
+                opt.UseSqlServer(Configuration.GetConnectionString("DefaultConnection")));
             services.AddTransient<WebStoreDBInitializer>();
 
             services.AddIdentity<User, Role>()
@@ -44,7 +42,6 @@ namespace WebStore.ServiceHosting
                 opt.Password.RequireNonAlphanumeric = false;
                 opt.Password.RequiredUniqueChars = 3;
 
-                //opt.User.AllowedUserNameCharacters = "abcdefghijklmnopqrstuvwxyzABCD...123457890";
                 opt.User.RequireUniqueEmail = false;
 
                 opt.Lockout.AllowedForNewUsers = true;
@@ -52,30 +49,12 @@ namespace WebStore.ServiceHosting
                 opt.Lockout.DefaultLockoutTimeSpan = TimeSpan.FromMinutes(10);
             });
 
-            services.ConfigureApplicationCookie(opt =>
-            {
-                opt.Cookie.Name = "WebStore";
-                opt.Cookie.HttpOnly = true;
-                opt.ExpireTimeSpan = TimeSpan.FromDays(10);
-
-                opt.LoginPath = "/Account/Login";
-                opt.LogoutPath = "/Account/Logout";
-                opt.AccessDeniedPath = "/Account/AccessDenied";
-
-                opt.SlidingExpiration = true;
-            });
-
-            services.AddControllersWithViews().AddRazorRuntimeCompilation();
-
-            //services.AddSingleton<IEmployeesData, InMemoryEmployeesData>();
-            services.AddSingleton<IEmployeesData, EmployeesClient>();
-            //services.AddScoped<IProductData, SqlProductData>();
-            services.AddScoped<IProductData, ProductsClient>();
+            services.AddSingleton<IEmployeesData, InMemoryEmployeesData>();
+            services.AddScoped<IProductData, SqlProductData>();
             services.AddScoped<ICartService, CookiesCartService>();
-            //services.AddScoped<IOrderService, SqlOrderService>();
-            services.AddScoped<IOrderService, OrdersClient>();
+            services.AddScoped<IOrderService, SqlOrderService>();
 
-            services.AddScoped<IValueServices, ValuesClient>();
+            services.AddControllers();
         }
 
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
