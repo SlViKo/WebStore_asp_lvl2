@@ -61,4 +61,3 @@ namespace WebStore.Clients.Base
         }
     }
 }
-}
