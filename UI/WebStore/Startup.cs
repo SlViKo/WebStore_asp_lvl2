@@ -16,6 +16,7 @@ using WebStore.DAL.Context;
 using WebStore.Domain.Entities.Identity;
 using WebStore.Interfaces.Api;
 using WebStore.Interfaces.Services;
+using WebStore.Logger;
 using WebStore.Services.Data;
 using WebStore.Services.Products.InCookies;
 
@@ -91,6 +92,8 @@ namespace WebStore
 
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env, ILoggerFactory log)
         {
+
+            log.AddLog4Net();
 
             if (env.IsDevelopment())
             {
