@@ -86,18 +86,6 @@ namespace WebStore.Tests.Controllers
             var controller = new HomeController();
             const string expected_message_text = "Message!";
 
-            //Exception error = null;
-            //try
-            //{
-            //    var result = controller.Throw(expected_message_text);
-            //}
-            //catch (Exception e)
-            //{
-            //    error = e;
-            //}
-
-            //Assert.Null(error);
-
             var exception = Assert.Throws<ApplicationException>(() => controller.Throw(expected_message_text));
 
             Assert.Equal(expected_message_text, exception.Message);
