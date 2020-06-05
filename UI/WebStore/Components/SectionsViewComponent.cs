@@ -12,7 +12,19 @@ namespace WebStore.Components
         private readonly IProductData _ProductData;
         public SectionsViewComponent(IProductData ProductData) => _ProductData = ProductData;
 
-        public IViewComponentResult Invoke() => View(GetSections());
+        public IViewComponentResult Invoke(string SectionId)
+        {
+            var section_id = int.TryParse(SectionId, out var id) ? id : (int?)null;
+
+            var sections = GetSections(section_id, out var parent_section_id);
+
+            return View(new SectionCompleteViewModel
+            {
+                Sections = sections,
+                CurrentSectionId = section_id,
+                ParentSectionId = parent_section_id
+            });
+        }
 
         //public async Task<IViewComponentResult> InvokeAsync()
         //{
