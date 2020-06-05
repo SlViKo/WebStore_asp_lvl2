@@ -13,10 +13,6 @@ namespace WebStore.Controllers
 
         public IActionResult Error404() => View();
 
-        public IActionResult Blog() => View();
-
-        public IActionResult BlogSingle() => View();
-
         public IActionResult CheckOut() => View();
 
         public IActionResult ContactUs() => View();
